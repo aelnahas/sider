@@ -82,8 +82,6 @@ func Parse(input io.Reader) (*RawCommand, error) {
 		return nil, fmt.Errorf("syntax err option %s is missing a value", optionName)
 	}
 
-	fmt.Printf("%+v\n", options)
-
 	return &RawCommand{Name: name, Args: args, Options: options, IsPubSubCMD: cmdRule.isPubSubCmd}, nil
 }
 

@@ -192,7 +192,7 @@ func (c *client) Read() {
 
 func (c *client) SendMessages() {
 	for msg := range c.messages {
-		slog.Info("publishing message", "topic", msg.Topic, "data", msg.Data, "kind", string(msg.Kind))
+		slog.Info("publishing message", "topic", msg.Topic, "data", msg.Data, "kind", fmt.Sprint(msg.Kind))
 
 		res := resp.EncodeArray(
 			msg.Kind.String(),

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/aelnahas/sider/resp"
 	"github.com/stretchr/testify/assert"
@@ -24,7 +25,7 @@ func TestParser(t *testing.T) {
 			expectedAST: &resp.RawCommand{
 				Name:    "GET",
 				Args:    []string{"foo"},
-				Options: map[string]string{},
+				Options: map[string]any{},
 			},
 		},
 		{
@@ -34,7 +35,7 @@ func TestParser(t *testing.T) {
 			expectedAST: &resp.RawCommand{
 				Name:    "SET",
 				Args:    []string{"foo", "bar"},
-				Options: map[string]string{},
+				Options: map[string]any{},
 			},
 		},
 		{
@@ -44,9 +45,10 @@ func TestParser(t *testing.T) {
 			expectedAST: &resp.RawCommand{
 				Name: "SET",
 				Args: []string{"foo", "bar"},
-				Options: map[string]string{
-					"EX": "100",
+				Options: map[string]any{
+					"EX": time.Duration(100000000000),
 				},
+				IsPubSubCMD: false,
 			},
 		},
 		{
@@ -56,7 +58,7 @@ func TestParser(t *testing.T) {
 			expectedAST: &resp.RawCommand{
 				Name:    "PING",
 				Args:    []string{},
-				Options: map[string]string{},
+				Options: map[string]any{},
 			},
 		},
 		{
@@ -66,7 +68,7 @@ func TestParser(t *testing.T) {
 			expectedAST: &resp.RawCommand{
 				Name:    "PING",
 				Args:    []string{"foo"},
-				Options: map[string]string{},
+				Options: map[string]any{},
 			},
 		},
 		{
@@ -76,7 +78,7 @@ func TestParser(t *testing.T) {
 			expectedAST: &resp.RawCommand{
 				Name:    "PING",
 				Args:    []string{"foo"},
-				Options: map[string]string{},
+				Options: map[string]any{},
 			},
 		},
 		{
@@ -94,7 +96,7 @@ func TestParser(t *testing.T) {
 		{
 			name:          "set with missing option value",
 			input:         "*4\r\n$3\r\nset\r\n$3\r\nfoo\r\n$3\r\nbar\r\n$2\r\nex\r\n",
-			expectedError: errors.New("syntax err option ex is missing a value"),
+			expectedError: errors.New("syntax err option EX is missing a value"),
 			expectedAST:   nil,
 		},
 	}

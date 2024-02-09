@@ -14,5 +14,5 @@ jobs:
         run: go get .
       - name: Build
         run: go build -v ./...
-      - name: Test with the Go CLI
-        run: go test
+      - name: Run tests 
+        run: go test -v ./...
