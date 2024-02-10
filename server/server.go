@@ -105,6 +105,7 @@ func (c *Connection) handleConn(conn net.Conn) error {
 
 		cmd, err := resp.Parse(request)
 		if err != nil {
+			slog.Error("error occured while parsing", "error", err)
 			response = resp.Encode(err)
 			_, err = conn.Write(response)
 			if err != io.EOF {
@@ -114,8 +115,11 @@ func (c *Connection) handleConn(conn net.Conn) error {
 			return err
 		}
 
+		slog.Info("command parsed", "cmd", fmt.Sprintf("%+v", cmd))
+
 		var result any
 		if cmd.IsPubSubCMD {
+			slog.Info("is pub sub command")
 			c.executePubSubCmd(cmd, conn)
 		} else {
 			result, err = c.store.Execute(context.Background(), cmd.Name, cmd.Args, cmd.Options)
@@ -133,6 +137,8 @@ func (c *Connection) handleConn(conn net.Conn) error {
 		} else {
 			response = resp.Encode(result)
 		}
+
+		slog.Info("response", "raw", response)
 		_, err = conn.Write(response)
 		if err != nil {
 			if err != io.EOF {
